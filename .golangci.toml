@@ -1,0 +1,35 @@
+[run]
+timeout = "1m"
+
+[linters]
+enable-all = true
+disable = [
+    # Deprecated linters
+    "deadcode",
+    "exhaustivestruct",
+    "golint",
+    "ifshort",
+    "interfacer",
+    "maligned",
+    "nosnakecase",
+    "scopelint",
+    "structcheck",
+    "varcheck",
+    # Linters that are not useful here
+    "depguard",
+    "gomnd",
+    "nlreturn",
+    "paralleltest",
+    "varnamelen",
+    "wsl",
+]
+
+[issues]
+max-same-issues = 50
+
+[[issues.exclude-rules]]
+path = "_test\\.go"
+linters = [
+    "exhaustruct",
+    "funlen",
+]
