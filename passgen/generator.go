@@ -86,15 +86,6 @@ func (g *Generator) Generate(input *GenerateInput) (string, error) {
 	return string(password), nil
 }
 
-// Generate returns a randomly generated password.
-func Generate(input *GenerateInput) (string, error) {
-	g, err := NewGenerator()
-	if err != nil {
-		return "", fmt.Errorf("error creating generator: %w", err)
-	}
-	return g.Generate(input)
-}
-
 // getCharPool returns a string containing all characters that can be used to
 // generate a password.
 func (g *Generator) getCharPool(input *GenerateInput) string {
