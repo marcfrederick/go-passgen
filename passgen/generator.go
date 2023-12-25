@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"math/big"
+	"strings"
 )
 
 const (
@@ -68,27 +69,18 @@ func (g *Generator) Generate(input *GenerateInput) (string, error) {
 		return "", ErrInvalidLength
 	}
 
-	charCategories := g.getCharCategories(input)
-	numCategories := len(charCategories)
-
-	if numCategories == 0 {
+	charPool := g.getCharPool(input)
+	if len(charPool) == 0 {
 		return "", ErrNoCategories
 	}
 
 	password := make([]byte, input.Length)
 	for i := 0; i < input.Length; i++ {
-		categoryIndex, err := rand.Int(g.reader, big.NewInt(int64(numCategories)))
-		if err != nil {
-			return "", fmt.Errorf("error selecting character category: %w", err)
-		}
-		charCategory := charCategories[categoryIndex.Int64()]
-
-		charIndex, err := rand.Int(g.reader, big.NewInt(int64(len(charCategory))))
+		charIndex, err := rand.Int(g.reader, big.NewInt(int64(len(charPool))))
 		if err != nil {
 			return "", fmt.Errorf("error selecting character: %w", err)
 		}
-
-		password[i] = charCategory[charIndex.Int64()]
+		password[i] = charPool[charIndex.Int64()]
 	}
 
 	return string(password), nil
@@ -103,22 +95,23 @@ func Generate(input *GenerateInput) (string, error) {
 	return g.Generate(input)
 }
 
-// getCharCategories returns a slice of allowed character categories.
-func (g *Generator) getCharCategories(input *GenerateInput) []string {
-	charCategories := make([]string, 0, 4)
+// getCharPool returns a string containing all characters that can be used to
+// generate a password.
+func (g *Generator) getCharPool(input *GenerateInput) string {
+	var charPool strings.Builder
 
 	if input.UseUppercaseLetters {
-		charCategories = append(charCategories, uppercaseLetters)
+		charPool.WriteString(uppercaseLetters)
 	}
 	if input.UseLowercaseLetters {
-		charCategories = append(charCategories, lowercaseLetters)
+		charPool.WriteString(lowercaseLetters)
 	}
 	if input.UseDigits {
-		charCategories = append(charCategories, digits)
+		charPool.WriteString(digits)
 	}
 	if input.UseSymbols {
-		charCategories = append(charCategories, symbols)
+		charPool.WriteString(symbols)
 	}
 
-	return charCategories
+	return charPool.String()
 }
