@@ -49,14 +49,22 @@ func NewGenerator(opts ...GeneratorOpt) (*Generator, error) {
 	return generator, nil
 }
 
-// GenerateInput is the input to the Generate method.
-type GenerateInput struct {
-	Length                  int
-	ExcludeUppercaseLetters bool
-	ExcludeLowercaseLetters bool
-	ExcludeDigits           bool
-	ExcludeSymbols          bool
-}
+// CharSetExclusion is a character set exclusion.
+type CharSetExclusion byte
+
+const (
+	// ExcludeUppercaseLetters excludes uppercase letters from the character pool.
+	ExcludeUppercaseLetters CharSetExclusion = 1 << iota
+
+	// ExcludeLowercaseLetters excludes lowercase letters from the character pool.
+	ExcludeLowercaseLetters
+
+	// ExcludeDigits excludes digits from the character pool.
+	ExcludeDigits
+
+	// ExcludeSymbols excludes symbols from the character pool.
+	ExcludeSymbols
+)
 
 var (
 	ErrInvalidLength = errors.New("length must be greater than 0")
@@ -64,18 +72,18 @@ var (
 )
 
 // Generate returns a randomly generated password.
-func (g *Generator) Generate(input *GenerateInput) (string, error) {
-	if input.Length < 1 {
+func (g *Generator) Generate(length int, charsetExclusions ...CharSetExclusion) (string, error) {
+	if length < 1 {
 		return "", ErrInvalidLength
 	}
 
-	charPool := g.getCharPool(input)
+	charPool := g.getCharPool(charsetExclusions)
 	if len(charPool) == 0 {
 		return "", ErrNoCategories
 	}
 
-	password := make([]byte, input.Length)
-	for i := 0; i < input.Length; i++ {
+	password := make([]byte, length)
+	for i := 0; i < length; i++ {
 		charIndex, err := rand.Int(g.reader, big.NewInt(int64(len(charPool))))
 		if err != nil {
 			return "", fmt.Errorf("error selecting character: %w", err)
@@ -88,19 +96,24 @@ func (g *Generator) Generate(input *GenerateInput) (string, error) {
 
 // getCharPool returns a string containing all characters that can be used to
 // generate a password.
-func (g *Generator) getCharPool(input *GenerateInput) string {
+func (g *Generator) getCharPool(charsetExclusions []CharSetExclusion) string {
+	var charsetExclusion CharSetExclusion
+	for _, exclusion := range charsetExclusions {
+		charsetExclusion |= exclusion
+	}
+
 	var charPool strings.Builder
 
-	if !input.ExcludeUppercaseLetters {
+	if charsetExclusion&ExcludeUppercaseLetters == 0 {
 		charPool.WriteString(uppercaseLetters)
 	}
-	if !input.ExcludeLowercaseLetters {
+	if charsetExclusion&ExcludeLowercaseLetters == 0 {
 		charPool.WriteString(lowercaseLetters)
 	}
-	if !input.ExcludeDigits {
+	if charsetExclusion&ExcludeDigits == 0 {
 		charPool.WriteString(digits)
 	}
-	if !input.ExcludeSymbols {
+	if charsetExclusion&ExcludeSymbols == 0 {
 		charPool.WriteString(symbols)
 	}
 

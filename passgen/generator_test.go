@@ -15,7 +15,8 @@ const randomString = "zUJfcYXQhe7luxOhEeJPZ8LIkKBzsnSqWALSpD78BbbgLtn6Da"
 
 func TestGenerator_Generate(t *testing.T) {
 	type args struct {
-		input *passgen.GenerateInput
+		length            int
+		charsetExclusions []passgen.CharSetExclusion
 	}
 	tests := []struct {
 		name    string
@@ -26,11 +27,11 @@ func TestGenerator_Generate(t *testing.T) {
 		{
 			name: "only uppercase letters",
 			args: args{
-				input: &passgen.GenerateInput{
-					Length:                  16,
-					ExcludeLowercaseLetters: true,
-					ExcludeDigits:           true,
-					ExcludeSymbols:          true,
+				length: 16,
+				charsetExclusions: []passgen.CharSetExclusion{
+					passgen.ExcludeLowercaseLetters,
+					passgen.ExcludeDigits,
+					passgen.ExcludeSymbols,
 				},
 			},
 			want: "VKGDZYRIFXMVYPIF",
@@ -38,11 +39,11 @@ func TestGenerator_Generate(t *testing.T) {
 		{
 			name: "only lowercase letters",
 			args: args{
-				input: &passgen.GenerateInput{
-					Length:                  16,
-					ExcludeUppercaseLetters: true,
-					ExcludeDigits:           true,
-					ExcludeSymbols:          true,
+				length: 16,
+				charsetExclusions: []passgen.CharSetExclusion{
+					passgen.ExcludeUppercaseLetters,
+					passgen.ExcludeDigits,
+					passgen.ExcludeSymbols,
 				},
 			},
 			want: "vkgdzyrifxmvypif",
@@ -50,11 +51,11 @@ func TestGenerator_Generate(t *testing.T) {
 		{
 			name: "only digits",
 			args: args{
-				input: &passgen.GenerateInput{
-					Length:                  16,
-					ExcludeUppercaseLetters: true,
-					ExcludeLowercaseLetters: true,
-					ExcludeSymbols:          true,
+				length: 16,
+				charsetExclusions: []passgen.CharSetExclusion{
+					passgen.ExcludeUppercaseLetters,
+					passgen.ExcludeLowercaseLetters,
+					passgen.ExcludeSymbols,
 				},
 			},
 			want: "5639818575885508",
@@ -62,11 +63,11 @@ func TestGenerator_Generate(t *testing.T) {
 		{
 			name: "only symbols",
 			args: args{
-				input: &passgen.GenerateInput{
-					Length:                  16,
-					ExcludeUppercaseLetters: true,
-					ExcludeLowercaseLetters: true,
-					ExcludeDigits:           true,
+				length: 16,
+				charsetExclusions: []passgen.CharSetExclusion{
+					passgen.ExcludeUppercaseLetters,
+					passgen.ExcludeLowercaseLetters,
+					passgen.ExcludeDigits,
 				},
 			},
 			want: `_@+'$^]<)&\-@]:)`,
@@ -74,12 +75,12 @@ func TestGenerator_Generate(t *testing.T) {
 		{
 			name: "no categories",
 			args: args{
-				input: &passgen.GenerateInput{
-					Length:                  16,
-					ExcludeUppercaseLetters: true,
-					ExcludeLowercaseLetters: true,
-					ExcludeDigits:           true,
-					ExcludeSymbols:          true,
+				length: 16,
+				charsetExclusions: []passgen.CharSetExclusion{
+					passgen.ExcludeUppercaseLetters,
+					passgen.ExcludeLowercaseLetters,
+					passgen.ExcludeDigits,
+					passgen.ExcludeSymbols,
 				},
 			},
 			wantErr: passgen.ErrNoCategories,
@@ -87,9 +88,7 @@ func TestGenerator_Generate(t *testing.T) {
 		{
 			name: "invalid length",
 			args: args{
-				input: &passgen.GenerateInput{
-					Length: 0,
-				},
+				length: 0,
 			},
 			wantErr: passgen.ErrInvalidLength,
 		},
@@ -101,7 +100,7 @@ func TestGenerator_Generate(t *testing.T) {
 				t.Fatalf("NewGenerator() error = %v", err)
 			}
 
-			got, err := generator.Generate(tt.args.input)
+			got, err := generator.Generate(tt.args.length, tt.args.charsetExclusions...)
 			if (err != nil) && !errors.Is(err, tt.wantErr) {
 				t.Errorf("Generate() error = %v, wantErr %v", err, tt.wantErr)
 				return

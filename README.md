@@ -31,13 +31,16 @@ import (
 )
 
 func main() {
-	password, err := passgen.Generate(&passgen.GenerateInput{
-		Length:         16,
-		ExcludeSymbols: true,
-	})
+	generator, err := passgen.NewGenerator()
+	if err != nil {
+		log.Fatalf("failed to create generator: %v", err)
+	}
+
+	password, err := generator.Generate(16, passgen.ExcludeSymbols, passgen.ExcludeDigits)
 	if err != nil {
 		log.Fatalf("failed to generate password: %v", err)
 	}
+
 	log.Printf("password: %s", password)
 }
 ```
