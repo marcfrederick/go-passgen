@@ -27,8 +27,10 @@ func TestGenerator_Generate(t *testing.T) {
 			name: "only uppercase letters",
 			args: args{
 				input: &passgen.GenerateInput{
-					Length:              16,
-					UseUppercaseLetters: true,
+					Length:                  16,
+					ExcludeLowercaseLetters: true,
+					ExcludeDigits:           true,
+					ExcludeSymbols:          true,
 				},
 			},
 			want: "VKGDZYRIFXMVYPIF",
@@ -37,8 +39,10 @@ func TestGenerator_Generate(t *testing.T) {
 			name: "only lowercase letters",
 			args: args{
 				input: &passgen.GenerateInput{
-					Length:              16,
-					UseLowercaseLetters: true,
+					Length:                  16,
+					ExcludeUppercaseLetters: true,
+					ExcludeDigits:           true,
+					ExcludeSymbols:          true,
 				},
 			},
 			want: "vkgdzyrifxmvypif",
@@ -47,8 +51,10 @@ func TestGenerator_Generate(t *testing.T) {
 			name: "only digits",
 			args: args{
 				input: &passgen.GenerateInput{
-					Length:    16,
-					UseDigits: true,
+					Length:                  16,
+					ExcludeUppercaseLetters: true,
+					ExcludeLowercaseLetters: true,
+					ExcludeSymbols:          true,
 				},
 			},
 			want: "5639818575885508",
@@ -57,8 +63,10 @@ func TestGenerator_Generate(t *testing.T) {
 			name: "only symbols",
 			args: args{
 				input: &passgen.GenerateInput{
-					Length:     16,
-					UseSymbols: true,
+					Length:                  16,
+					ExcludeUppercaseLetters: true,
+					ExcludeLowercaseLetters: true,
+					ExcludeDigits:           true,
 				},
 			},
 			want: `_@+'$^]<)&\-@]:)`,
@@ -67,7 +75,11 @@ func TestGenerator_Generate(t *testing.T) {
 			name: "no categories",
 			args: args{
 				input: &passgen.GenerateInput{
-					Length: 16,
+					Length:                  16,
+					ExcludeUppercaseLetters: true,
+					ExcludeLowercaseLetters: true,
+					ExcludeDigits:           true,
+					ExcludeSymbols:          true,
 				},
 			},
 			wantErr: passgen.ErrNoCategories,

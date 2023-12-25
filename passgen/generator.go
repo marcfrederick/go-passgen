@@ -51,11 +51,11 @@ func NewGenerator(opts ...GeneratorOpt) (*Generator, error) {
 
 // GenerateInput is the input to the Generate method.
 type GenerateInput struct {
-	Length              int
-	UseUppercaseLetters bool
-	UseLowercaseLetters bool
-	UseDigits           bool
-	UseSymbols          bool
+	Length                  int
+	ExcludeUppercaseLetters bool
+	ExcludeLowercaseLetters bool
+	ExcludeDigits           bool
+	ExcludeSymbols          bool
 }
 
 var (
@@ -91,16 +91,16 @@ func (g *Generator) Generate(input *GenerateInput) (string, error) {
 func (g *Generator) getCharPool(input *GenerateInput) string {
 	var charPool strings.Builder
 
-	if input.UseUppercaseLetters {
+	if !input.ExcludeUppercaseLetters {
 		charPool.WriteString(uppercaseLetters)
 	}
-	if input.UseLowercaseLetters {
+	if !input.ExcludeLowercaseLetters {
 		charPool.WriteString(lowercaseLetters)
 	}
-	if input.UseDigits {
+	if !input.ExcludeDigits {
 		charPool.WriteString(digits)
 	}
-	if input.UseSymbols {
+	if !input.ExcludeSymbols {
 		charPool.WriteString(symbols)
 	}
 

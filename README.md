@@ -32,16 +32,12 @@ import (
 
 func main() {
 	password, err := passgen.Generate(&passgen.GenerateInput{
-		Length:              16,
-		UseUppercaseLetters: true,
-		UseLowercaseLetters: true,
-		UseNumbers:          true,
-		UseSymbols:          true,
+		Length:         16,
+		ExcludeSymbols: true,
 	})
 	if err != nil {
 		log.Fatalf("failed to generate password: %v", err)
 	}
-	println(password)
+	log.Printf("password: %s", password)
 }
-
 ```
