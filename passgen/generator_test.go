@@ -16,7 +16,7 @@ const randomString = "zUJfcYXQhe7luxOhEeJPZ8LIkKBzsnSqWALSpD78BbbgLtn6Da"
 func TestGenerator_Generate(t *testing.T) {
 	type args struct {
 		length            int
-		charsetExclusions []passgen.CharSetExclusion
+		charsetExclusions []passgen.GenerateOpt
 	}
 	tests := []struct {
 		name    string
@@ -28,7 +28,7 @@ func TestGenerator_Generate(t *testing.T) {
 			name: "only uppercase letters",
 			args: args{
 				length: 16,
-				charsetExclusions: []passgen.CharSetExclusion{
+				charsetExclusions: []passgen.GenerateOpt{
 					passgen.ExcludeLowercaseLetters,
 					passgen.ExcludeDigits,
 					passgen.ExcludeSymbols,
@@ -40,7 +40,7 @@ func TestGenerator_Generate(t *testing.T) {
 			name: "only lowercase letters",
 			args: args{
 				length: 16,
-				charsetExclusions: []passgen.CharSetExclusion{
+				charsetExclusions: []passgen.GenerateOpt{
 					passgen.ExcludeUppercaseLetters,
 					passgen.ExcludeDigits,
 					passgen.ExcludeSymbols,
@@ -52,7 +52,7 @@ func TestGenerator_Generate(t *testing.T) {
 			name: "only digits",
 			args: args{
 				length: 16,
-				charsetExclusions: []passgen.CharSetExclusion{
+				charsetExclusions: []passgen.GenerateOpt{
 					passgen.ExcludeUppercaseLetters,
 					passgen.ExcludeLowercaseLetters,
 					passgen.ExcludeSymbols,
@@ -64,7 +64,7 @@ func TestGenerator_Generate(t *testing.T) {
 			name: "only symbols",
 			args: args{
 				length: 16,
-				charsetExclusions: []passgen.CharSetExclusion{
+				charsetExclusions: []passgen.GenerateOpt{
 					passgen.ExcludeUppercaseLetters,
 					passgen.ExcludeLowercaseLetters,
 					passgen.ExcludeDigits,
@@ -76,7 +76,7 @@ func TestGenerator_Generate(t *testing.T) {
 			name: "no categories",
 			args: args{
 				length: 16,
-				charsetExclusions: []passgen.CharSetExclusion{
+				charsetExclusions: []passgen.GenerateOpt{
 					passgen.ExcludeUppercaseLetters,
 					passgen.ExcludeLowercaseLetters,
 					passgen.ExcludeDigits,

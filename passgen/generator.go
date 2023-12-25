@@ -49,12 +49,12 @@ func NewGenerator(opts ...GeneratorOpt) (*Generator, error) {
 	return generator, nil
 }
 
-// CharSetExclusion is a character set exclusion.
-type CharSetExclusion byte
+// GenerateOpt is an option for configuring password generation.
+type GenerateOpt byte
 
 const (
 	// ExcludeUppercaseLetters excludes uppercase letters from the character pool.
-	ExcludeUppercaseLetters CharSetExclusion = 1 << iota
+	ExcludeUppercaseLetters GenerateOpt = 1 << iota
 
 	// ExcludeLowercaseLetters excludes lowercase letters from the character pool.
 	ExcludeLowercaseLetters
@@ -72,12 +72,12 @@ var (
 )
 
 // Generate returns a randomly generated password.
-func (g *Generator) Generate(length int, charsetExclusions ...CharSetExclusion) (string, error) {
+func (g *Generator) Generate(length int, generateOpts ...GenerateOpt) (string, error) {
 	if length < 1 {
 		return "", ErrInvalidLength
 	}
 
-	charPool := g.getCharPool(charsetExclusions)
+	charPool := g.getCharPool(generateOpts)
 	if len(charPool) == 0 {
 		return "", ErrNoCategories
 	}
@@ -96,8 +96,8 @@ func (g *Generator) Generate(length int, charsetExclusions ...CharSetExclusion) 
 
 // getCharPool returns a string containing all characters that can be used to
 // generate a password.
-func (g *Generator) getCharPool(charsetExclusions []CharSetExclusion) string {
-	var charsetExclusion CharSetExclusion
+func (g *Generator) getCharPool(charsetExclusions []GenerateOpt) string {
+	var charsetExclusion GenerateOpt
 	for _, exclusion := range charsetExclusions {
 		charsetExclusion |= exclusion
 	}
