@@ -53,6 +53,7 @@ func main() {
 ```
 
 The above example will generate a password with a length of 16 characters, excluding symbols and digits.
+See the [documentation](https://pkg.go.dev/github.com/marcfrederick/go-passgen/passgen) for more information on the available options.
 
 ### Options
 

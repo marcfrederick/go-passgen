@@ -67,11 +67,17 @@ const (
 )
 
 var (
+	// ErrInvalidLength is returned when the length of the password is <= 0.
 	ErrInvalidLength = errors.New("length must be greater than 0")
-	ErrNoCategories  = errors.New("no character categories selected")
+	// ErrNoCategories is returned when no character categories are selected.
+	ErrNoCategories = errors.New("no character categories selected")
 )
 
 // Generate returns a randomly generated password.
+//
+// The password will be of the specified length and will contain characters
+// from the selected character categories. The default character pool includes
+// uppercase letters, lowercase letters, digits, and symbols.
 func (g *Generator) Generate(length int, generateOpts ...GenerateOpt) (string, error) {
 	if length < 1 {
 		return "", ErrInvalidLength
@@ -92,6 +98,15 @@ func (g *Generator) Generate(length int, generateOpts ...GenerateOpt) (string, e
 	}
 
 	return string(password), nil
+}
+
+// MustGenerate is like Generate, but panics if an error occurs.
+func (g *Generator) MustGenerate(length int, generateOpts ...GenerateOpt) string {
+	password, err := g.Generate(length, generateOpts...)
+	if err != nil {
+		panic(err)
+	}
+	return password
 }
 
 // getCharPool returns a string containing all characters that can be used to
