@@ -1,0 +1,21 @@
+version: "2"
+
+linters:
+  default: all
+  disable:
+    - depguard
+    - mnd
+    - nlreturn
+    - paralleltest
+    - varnamelen
+    - wsl
+  exclusions:
+    warn-unused: true
+    presets: ["comments"]
+    rules:
+      - linters: ["exhaustruct", "funlen"]
+        path: _test.go
+
+formatters:
+  enable:
+    - gofumpt
